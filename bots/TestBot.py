@@ -7,7 +7,7 @@ import binascii
 import struct
 import argparse
 import random
-
+import pprint
 
 class ServerMessageTypes(object):
 	TEST = 0
@@ -146,6 +146,18 @@ class ServerComms(object):
 			binascii.hexlify(message)))
 		return self.ServerSocket.send(message)
 
+class Tank:
+	def __init__(self, name):
+		self.name = name
+		self.health = 5
+		self.amo = 10
+		self.x = 0
+		self.y = 0
+
+	def getHealth(self, message):
+		if 'Health' in message and 'Name' in message and message['Name'] is self.name:
+			self.health = message['Health']
+		return self.health
 
 # Parse command line args
 parser = argparse.ArgumentParser()
@@ -169,21 +181,28 @@ GameServer = ServerComms(args.hostname, args.port)
 logging.info("Creating tank with name '{}'".format(args.name))
 GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 
+myTank = Tank(args.name)
 # Main loop - read game messages, ignore them and randomly perform actions
 i=0
+
+# This function 'listens' to the messages and groups them into a list, grouping
+# all the messages that I receive in between two adjacent messages about my own robot.
+# These should be all the objects in the line of sight
+messages = list()
+def process(message, name):
+	global messages
+	if 'Name' in message and message['Name'] == name:
+		pprint.pprint(messages)
+		messages = []
+
+	messages.append(message)
+	# print(messages)
+
 while True:
 	message = GameServer.readMessage()
-	logging.info(message)
-	# if i == 5:
-	# 	if random.randint(0, 10) > 5:
-	# 		logging.info("Firing")
-	# 		GameServer.sendMessage(ServerMessageTypes.FIRE)
-	# elif i == 10:
-	# 	logging.info("Turning randomly")
-	# 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
-	# elif i == 15:
-	# 	logging.info("Moving randomly")
-	# 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': random.randint(0, 10)})
-	# i = i + 5
-	# if i > 20:
-	# 	i = 0
+
+	process(message, 'RandomBot')
+
+	# Move randomly
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
+	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
