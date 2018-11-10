@@ -3,7 +3,7 @@ import math
 #def radToDeg(angle):
     #return angle * (180.0 / math.pi)
 
-def isTurnLeft(currentHeading, desiredHeading):
+def is_turn_left(currentHeading, desiredHeading):
     diff = desiredHeading - currentHeading
     if (diff > 0):
         return (diff > 180)
