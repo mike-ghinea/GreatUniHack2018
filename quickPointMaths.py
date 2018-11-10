@@ -18,12 +18,12 @@ class Point:
     def __str__(self):
         return "Point(%s,%s)"%(self.x, self.y)
 
-def getDist(pointA, pointB):
+def get_dist(pointA, pointB):
     headingX = pointB.getX() - pointA.getX()
     headingY = pointB.getY() - pointA.getY()
     return math.hypot(headingX, headingY)
 
-def getHeading(pointA, pointB):
+def get_heading(pointA, pointB):
     heading = math.atan2(pointB.getY() - pointA.getY(), pointB.getX() - pointA.getX())
     heading = math.degrees(heading)
     heading = (heading - 360) % 360
