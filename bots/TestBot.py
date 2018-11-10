@@ -7,7 +7,7 @@ import binascii
 import struct
 import argparse
 import random
-import pprint
+from pprint import pprint
 
 class ServerMessageTypes(object):
 	TEST = 0
@@ -168,27 +168,26 @@ GameServer = ServerComms(args.hostname, args.port)
 logging.info("Creating tank with name '{}'".format(args.name))
 GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 
-# Main loop - read game messages, ignore them and randomly perform actions
-i=0
-
 # This function 'listens' to the messages and groups them into a list, grouping
 # all the messages that I receive in between two adjacent messages about my own robot.
 # These should be all the objects in the line of sight
-messages = list()
-def process(message, name):
-	global messages
+oldObjects = []
+newObjects = []
+def get_objects(message, name):
+	global oldObjects, newObjects
+	newObjects.append(message)
 	if 'Name' in message and message['Name'] == name:
-		pprint.pprint(messages)
-		messages = []
+		oldObjects = newObjects
+		newObjects = []
 
-	messages.append(message)
+	return oldObjects
 	# print(messages)
 
 while True:
 	message = GameServer.readMessage()
 
-	process(message, 'RandomBot')
-
+	objectsInSight = get_objects(message, args.name)
+	pprint(objectsInSight)
 	# Move randomly
 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
