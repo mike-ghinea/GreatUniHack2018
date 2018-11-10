@@ -18,7 +18,7 @@ class Point:
     def __str__(self):
         return "Point(%s,%s)"%(self.x, self.y)
 
-def calcDist(pointA, pointB):
+def getDist(pointA, pointB):
     headingX = pointB.getX() - pointA.getX()
     headingY = pointB.getY() - pointA.getY()
     return math.hypot(headingX, headingY)
@@ -36,17 +36,11 @@ def is_turn_left(currentHeading, desiredHeading):
     else:
         return (diff >= -180)
 
-centrePoint = Point(0,0)
-#Boundaries of the arena  
-xAxisMax = Point(70,0)
-xAxisMin = Point(-70,0)
-yAxisMax = Point(0,100)
-yAxisMin = Point(0,-100)
 #test values
 '''
 somePoint = Point(69.420, 13.37)
 anotherPoint = Point(73.31, 24.96)
 
 print(getHeading(somePoint, anotherPoint))
-print(calcDist(somePoint, anotherPoint))
+print(getDist(somePoint, anotherPoint))
 '''
