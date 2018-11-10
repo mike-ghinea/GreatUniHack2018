@@ -1,13 +1,7 @@
 import math
 
-def radToDeg(angle):
-    return angle * (180.0 / math.pi)
-
-def getHeading(x1, y1, x2, y2):
-    heading = math.atan2(y2-y1, x2-x1)
-    heading = radToDeg(heading)
-    heading = (heading - 360) % 360
-    return math.fabs(heading)
+#def radToDeg(angle):
+    #return angle * (180.0 / math.pi)
 
 def isTurnLeft(currentHeading, desiredHeading):
     diff = desiredHeading - currentHeading
@@ -16,17 +10,41 @@ def isTurnLeft(currentHeading, desiredHeading):
     else:
         return (diff >= -180)
 
-def calcDist(thisX, thisY, thatX, thatY):
-    headingX = thatX - thisX
-    headingY = thatY - thisY
-    return math.sqrt(headingX*headingX + headingY*headingY)
+class Point:
+    """docstring for Point."""
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def getX(self):
+        return float(self.x)
+
+    def getY(self):
+        return float(self.y)
+
+    def move(self, dx, dy):
+        self.X += dx
+        self.Y += dy
+
+    def __str__(self):
+        return "Point(%s,%s)"%(self.x, self.y)
+
+def calcDist(pointA, pointB):
+    headingX = pointB.getX() - pointA.getX()
+    headingY = pointB.getY() - pointA.getY()
+    return math.hypot(headingX, headingY)
+
+def getHeading(pointA, pointB):
+    heading = math.atan2(pointB.getY() - pointA.getY(), pointB.getX() - pointA.getX())
+    heading = math.degrees(heading)
+    heading = (heading - 360) % 360
+    return math.fabs(heading)
 
 #test values
-'''
-print "radToDeg pi = \n"
-print(radToDeg(math.pi))
-print "\ngetHeading(420, 69, 1337, 80) = \n"
-print(getHeading(420, 69, 1337, 80))
-print "\ncalcDist(420, 69, 1337, 80) = \n"
-print(calcDist(420, 69, 1337, 80))
-'''
+#'''
+somePoint = Point(69.420, 13.37)
+anotherPoint = Point(73.31, 24.96)
+
+print(getHeading(somePoint, anotherPoint))
+print(calcDist(somePoint, anotherPoint))
+#'''
