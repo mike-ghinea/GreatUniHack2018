@@ -168,7 +168,6 @@ GameServer = ServerComms(args.hostname, args.port)
 logging.info("Creating tank with name '{}'".format(args.name))
 GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 
-myTank = Tank(args.name)
 # Main loop - read game messages, ignore them and randomly perform actions
 i=0
 
