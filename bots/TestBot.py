@@ -185,9 +185,6 @@ def get_objects(message, name):
 
 while True:
 	message = GameServer.readMessage()
-	print(message)
-	objects_in_sight = get_objects(message, args.name)
-	#pprint(objects_in_sight)
-	# Move randomly
+	
 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
