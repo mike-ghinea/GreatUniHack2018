@@ -22,10 +22,6 @@ class Point:
     def getY(self):
         return float(self.y)
 
-    def move(self, dx, dy):
-        self.X += dx
-        self.Y += dy
-
     def __str__(self):
         return "Point(%s,%s)"%(self.x, self.y)
 
@@ -41,10 +37,10 @@ def getHeading(pointA, pointB):
     return math.fabs(heading)
 
 #test values
-#'''
+'''
 somePoint = Point(69.420, 13.37)
 anotherPoint = Point(73.31, 24.96)
 
 print(getHeading(somePoint, anotherPoint))
 print(calcDist(somePoint, anotherPoint))
-#'''
+'''
