@@ -3,13 +3,6 @@ import math
 #def radToDeg(angle):
     #return angle * (180.0 / math.pi)
 
-def is_turn_left(currentHeading, desiredHeading):
-    diff = desiredHeading - currentHeading
-    if (diff > 0):
-        return (diff > 180)
-    else:
-        return (diff >= -180)
-
 class Point:
     """docstring for Point."""
     def __init__(self, x, y):
@@ -36,6 +29,19 @@ def getHeading(pointA, pointB):
     heading = (heading - 360) % 360
     return math.fabs(heading)
 
+def is_turn_left(currentHeading, desiredHeading):
+    diff = desiredHeading - currentHeading
+    if (diff > 0):
+        return (diff > 180)
+    else:
+        return (diff >= -180)
+
+centrePoint = Point(0,0)
+#Boundaries of the arena  
+xAxisMax = Point(70,0)
+xAxisMin = Point(-70,0)
+yAxisMax = Point(0,100)
+yAxisMin = Point(0,-100)
 #test values
 '''
 somePoint = Point(69.420, 13.37)
