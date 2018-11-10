@@ -1,20 +1,59 @@
-import quickPointMaths
+from quickPointMaths import Point
+from serverMessageTypes import ServerMessageTypes
 
-class Tank:
-    def __init__(self):
-        self.point = Point(0,0)
-        
+class Tank(object):
+
+    def __init__(self, name):
+        self.position = Point(0,0)
+        self.health = 5
+        self.ammo = 10
+        self.heading = 0
+        self.turret_heading = 0
+        self.id = 0
+        self.name = name
+
+    def update_tank(message):
+        if 'messageType' in message and message['messageType'] == ServerMessageTypes.OBJECTUPDATE:
+            if message['Name'] == self.name:
+                self.setPosition(Point(message['X'],message['Y']))
+                self.setHealth(message['Health'])
+                self.setAmmo(message['Amm0'])
+                self.setHeading(message['Heading'])
+                self.setTurretHeading(message['TurretHeading'])
+                self.setId(message['Id'])
+
     def getPosition(self):
-        return Point(self.point)
+        return self.position
+
+    def setPosition(self, point):
+        self.position = point
 
     def getHealth(self):
-        pass
+        self.health
 
-    def setHealth(self):
-        pass
+    def setHealth(self, val):
+        self.health = val
 
     def getAmmo(self):
-        pass
+        return self.ammo
 
-    def fire(self):
-        pass
+    def setAmmo(self, val):
+        self.ammo = val
+
+    def getHeading(self):
+        return self.heading
+
+    def setHeading(self, val):
+        self.heading = val
+
+    def getTurretHeading(self):
+        return self.turret_heading
+
+    def setTurretHeading(self, val):
+        self.turret_heading = val
+
+    def getId(self):
+        return self.id
+
+    def setId(self, val):
+        self.id = val

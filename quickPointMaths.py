@@ -3,7 +3,7 @@ import math
 #def radToDeg(angle):
     #return angle * (180.0 / math.pi)
 
-class Point:
+class Point(object):
     """docstring for Point."""
     def __init__(self, x, y):
         self.x = x
