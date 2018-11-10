@@ -171,14 +171,14 @@ GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 # This function 'listens' to the messages and groups them into a list, grouping
 # all the messages that I receive in between two adjacent messages about my own robot.
 # These should be all the objects in the line of sight
-oldObjects = []
-newObjects = []
+old_objects = []
+new_objects = []
 def get_objects(message, name):
-	global oldObjects, newObjects
-	newObjects.append(message)
+	global old_objects, new_objects
+	new_objects.append(message)
 	if 'Name' in message and message['Name'] == name:
-		oldObjects = newObjects
-		newObjects = []
+		old_objects = new_objects
+		new_objects = []
 
 	return oldObjects
 	# print(messages)
@@ -186,8 +186,8 @@ def get_objects(message, name):
 while True:
 	message = GameServer.readMessage()
 
-	objectsInSight = get_objects(message, args.name)
-	pprint(objectsInSight)
+	objects_in_sight = get_objects(message, args.name)
+	pprint(objects_in_sight)
 	# Move randomly
 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
