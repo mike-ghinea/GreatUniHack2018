@@ -146,19 +146,6 @@ class ServerComms(object):
 			binascii.hexlify(message)))
 		return self.ServerSocket.send(message)
 
-class Tank:
-	def __init__(self, name):
-		self.name = name
-		self.health = 5
-		self.amo = 10
-		self.x = 0
-		self.y = 0
-
-	def getHealth(self, message):
-		if 'Health' in message and 'Name' in message and message['Name'] is self.name:
-			self.health = message['Health']
-		return self.health
-
 # Parse command line args
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--debug', action='store_true', help='Enable debug output')
