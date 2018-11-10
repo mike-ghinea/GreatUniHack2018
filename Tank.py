@@ -1,9 +1,9 @@
 import quickPointMaths
 
 class Tank:
-    def __init__(self, point):
-        self.point = point
-
+    def __init__(self):
+        self.point = Point(0,0)
+        
     def getPosition(self):
         return Point(self.point)
 

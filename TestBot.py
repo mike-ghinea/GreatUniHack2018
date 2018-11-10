@@ -168,23 +168,9 @@ GameServer = ServerComms(args.hostname, args.port)
 logging.info("Creating tank with name '{}'".format(args.name))
 GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 
-# This function 'listens' to the messages and groups them into a list, grouping
-# all the messages that I receive in between two adjacent messages about my own robot.
-# These should be all the objects in the line of sight
-old_objects = []
-new_objects = []
-def get_objects(message, name):
-	global old_objects, new_objects
-	new_objects.append(message)
-	if 'Name' in message and message['Name'] == name:
-		old_objects = new_objects
-		new_objects = []
-
-	return old_objects
-	# print(messages)
-
+myTank = Tank()
 while True:
 	message = GameServer.readMessage()
-	
+
 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
