@@ -99,6 +99,7 @@ GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 myTank = Tank(args.name)
 while True:
 	message = GameServer.readMessage()
-	print("here")
+	# myTank.update_tank(message)
+	# print(myTank.getId())
 	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})

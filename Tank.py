@@ -12,12 +12,12 @@ class Tank(object):
         self.id = 0
         self.name = name
 
-    def update_tank(message):
+    def update_tank(self, message):
         if 'messageType' in message and message['messageType'] == ServerMessageTypes.OBJECTUPDATE:
             if message['Name'] == self.name:
                 self.setPosition(Point(message['X'],message['Y']))
                 self.setHealth(message['Health'])
-                self.setAmmo(message['Amm0'])
+                self.setAmmo(message['Ammo'])
                 self.setHeading(message['Heading'])
                 self.setTurretHeading(message['TurretHeading'])
                 self.setId(message['Id'])
