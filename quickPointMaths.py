@@ -12,8 +12,14 @@ class Point(object):
     def getX(self):
         return float(self.x)
 
+    def setX(self, x):
+        self.x = x
+
     def getY(self):
         return float(self.y)
+
+    def setY(self, y):
+        self.y = y
 
     def __str__(self):
         return "Point(%s,%s)"%(self.x, self.y)
