@@ -74,6 +74,7 @@ class ServerComms(object):
 			self.MessageTypes.toString(messageType),
 			messagePayload,
 			binascii.hexlify(message)))
+		time.sleep(0.045)
 		return self.ServerSocket.send(message)
 
 # Parse command line args
@@ -99,6 +100,40 @@ logging.info("Creating tank with name '{}'".format(args.name))
 GameServer.sendMessage(ServerMessageTypes.CREATETANK, {'Name': args.name})
 
 myTank = Tank(args.name)
+
+def update_state(message):
+	if "Type" in message and message["Type"] == "Tank" and message["Name"] == args.name:
+		myTank.update_tank(message)
+	elif "Type" in message and message["Type"] == "Tank":
+		id_ = message["Id"]
+		ok = 0
+		for index in range(len(tanks)):
+			if tanks[index]["Id"] == id_:
+				tanks[index] = message
+				ok = 1
+
+		if ok == 0:
+			tanks.append(message);
+	elif "Type" in message and message["Type"] == "AmmoPickup":
+		id_ = message["Id"]
+		ok = 0
+		for index in range(len(ammo)):
+			if ammo[index]["Id"] == id_:
+				ammo[index] = message
+				ok = 1
+
+		if ok == 0:
+			ammo.append(message);
+	elif "Type" in message and message["Type"] == "HealthPickup":
+		id_ = message["Id"]
+		ok = 0
+		for index in range(len(health)):
+			if health[index]["Id"] == id_:
+				health[index] = message
+				ok = 1
+
+		if ok == 0:
+			health.append(message);
 
 def move(tank, target):
 	[heading, distance] = tank.go_to(target)
@@ -138,7 +173,7 @@ def ninonino(tank):
 		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
-def shootytooty(tank):
+def INeedAmmo(tank):
 	distances = []
 	global ammo
 	for i in ammo:
@@ -154,6 +189,20 @@ def shootytooty(tank):
 		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
+def shootyTooty(tank):
+	distances = []
+	global tanks
+	tanks = sorted(tanks, key = lambda enemy: enemy['Health'] + get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))/50) # could also use enemy['Health']
+	tanks = [t for t in tanks if t['Health'] != 0]
+
+	if(len(tanks) != 0):
+		enemy = tanks[0]
+		point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
+
+	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
+	# GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
+
+
 def is_not_at_point(tankPos, target):
 	if get_dist(tankPos, target) < 4:
 		return False
@@ -167,43 +216,10 @@ health = []
 while True:
 	message = GameServer.readMessage()
 	# print(message)
-	if "Type" in message and message["Type"] == "Tank" and message["Name"] == args.name:
-		myTank.update_tank(message)
-	elif "Type" in message and message["Type"] == "Tank":
-		id_ = message["Id"]
-		ok = 0
-		for index in range(len(tanks)):
-			if tanks[index]["Id"] == id_:
-				tanks[index] = message
-				ok = 1
-		
-		if ok == 0:
-			tanks.append(message);
-	elif "Type" in message and message["Type"] == "AmmoPickup":
-		id_ = message["Id"]
-		ok = 0
-		for index in range(len(ammo)):
-			if ammo[index]["Id"] == id_:
-				ammo[index] = message
-				ok = 1
-		
-		if ok == 0:
-			ammo.append(message);
-	elif "Type" in message and message["Type"] == "HealthPickup":
-		id_ = message["Id"]
-		ok = 0
-		for index in range(len(health)):
-			if health[index]["Id"] == id_:
-				health[index] = message
-				ok = 1
-		
-		if ok == 0:
-			health.append(message);
-
+	update_state(message)
 
 	# print(myTank.getId())
 	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	# GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 	# print(myTank.getPosition())
-	shootytooty(myTank)
-
+	shootyTooty(myTank)
