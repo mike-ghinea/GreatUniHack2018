@@ -9,7 +9,7 @@ xAxisMin = Point(-70,0)
 yAxisMax = Point(0,100)
 yAxisMin = Point(0,-100)
 
-#Move from start to end point 
+#Move from start to end point
 def move(tank, endPoint):
     startPoint = tank.getPosition()
     currentPos = startPoint
@@ -29,3 +29,9 @@ def move(tank, endPoint):
         currentPos.setX(currentPos.getX() + xspeed)
         currentPos.setY(currentPos.getY() + yspeed)
         tank.setPosition(currentPos)
+
+def moveToGoalMax(tank):
+    move(tank, yAxisMax)
+
+def moveToGoalMin(tank):
+    move(tank, yAxisMin)
