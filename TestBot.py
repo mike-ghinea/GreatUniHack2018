@@ -179,14 +179,15 @@ def go_to_goal(tank):
 
 def point_and_shoot(tank, target):
 	print("Pointing and shooting")
+	print(tank.getAmmo())
 	heading = get_heading(tank.getPosition(), target)
 	global GameServer
-	print("Turning turret before firing")
+	# print("Turning turret before firing")
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
 	time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
 	time.sleep(0.05)
-	print("Turret turned")
+	# print("Turret turned")
 	time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.STOPMOVE)
 	time.sleep(0.05)
@@ -194,7 +195,7 @@ def point_and_shoot(tank, target):
 	time.sleep(0.05)
 
 def ninonino(tank):
-	# print("Getting health")
+	print("Getting health")
 	distances = []
 	global health
 	for i in health:
@@ -210,7 +211,7 @@ def ninonino(tank):
 		move_randomly()
 
 def INeedAmmo(tank):
-	# print("Getting ammo")
+	print("Getting ammo")
 	distances = []
 	global ammo
 	for i in ammo:
@@ -226,7 +227,7 @@ def INeedAmmo(tank):
 		move_randomly()
 
 def shootyTooty(tank):
-	# print("Shooting everyoneeee")
+	print("Shooting everyoneeee")
 	distances = []
 	global tanks
 	tanks = sorted(tanks, key = lambda enemy: enemy['Health'] + get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))) # could also use enemy['Health']
@@ -236,9 +237,8 @@ def shootyTooty(tank):
 		enemy = tanks[0]
 		distance = get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))
 		if  distance > 40:
-			print("here")
 			move_step_towards(tank, Point(enemy['X'], enemy['Y']))
-		
+
 		point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
 	else:
 		move_randomly()
@@ -277,10 +277,13 @@ got_snitch = False
 unbanked_kills = 0
 tank_with_snitch = False
 tank_with_snitch_id = 0
+control = int(round(time.time() * 1000))
 while True:
 	message = GameServer.readMessage()
+	time.sleep(0.05)
 	# print(message)
 	update_state(message)
+
 
 	if 'messageType' in message:
 		if message['messageType'] == ServerMessageTypes.KILL:
@@ -296,19 +299,20 @@ while True:
 		elif message['messageType'] == ServerMessageTypes.ENTEREDGOAL:
 			unbanked_kills = 0
 
-	if got_snitch:
-		go_to_goal(myTank)
-	elif tank_with_snitch:
-		kill_tank_with_snitch(myTank, tank_with_snitch_id)
-	elif unbanked_kills > 0:
-		go_to_goal(myTank)
-	elif myTank.getAmmo() != 0 and len(tanks) != 0:
-		shootyTooty(myTank)
-	elif myTank.getAmmo() < 8:
-		INeedAmmo(myTank)
-	else:
-		ninonino(myTank)
-
+	if int(round(time.time() * 1000)) - control >= 1000:
+		control = int(round(time.time() * 1000))
+		if got_snitch:
+			go_to_goal(myTank)
+		elif tank_with_snitch:
+			kill_tank_with_snitch(myTank, tank_with_snitch_id)
+		elif unbanked_kills > 0:
+			go_to_goal(myTank)
+		elif myTank.getAmmo() != 0 and len(tanks) != 0:
+			shootyTooty(myTank)
+		elif myTank.getAmmo() < 8:
+			INeedAmmo(myTank)
+		else:
+			ninonino(myTank)
 
 	# print(myTank.getId())
 	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})

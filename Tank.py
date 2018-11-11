@@ -18,9 +18,9 @@ class Tank(object):
                 self.setPosition(Point(message['X'],message['Y']))
                 self.setHealth(message['Health'])
                 self.setAmmo(message['Ammo'])
-                print("Pre :", self.heading)
+                # print("Pre :", self.heading)
                 self.setHeading(message['Heading'])
-                print("Post:", self.heading)
+                # print("Post:", self.heading)
                 self.setTurretHeading(message['TurretHeading'])
                 self.setId(message['Id'])
 
