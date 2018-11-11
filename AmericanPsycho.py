@@ -82,7 +82,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--debug', action='store_true', help='Enable debug output')
 parser.add_argument('-H', '--hostname', default='127.0.0.1', help='Hostname to connect to')
 parser.add_argument('-p', '--port', default=8052, type=int, help='Port to connect to')
-parser.add_argument('-n', '--name', default='RandomBot', help='Name of bot')
+parser.add_argument('-n', '--name', default='AmericanPsycho', help='Name of bot')
 args = parser.parse_args()
 
 # Set up console logging
@@ -236,11 +236,11 @@ def shootyTooty(tank):
 	if(len(tanks) != 0):
 		enemy = tanks[0]
 		distance = get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))
-		if  distance > 40:
+		if  distance > 50:
 			move_step_towards(tank, Point(enemy['X'], enemy['Y']))
 		else:
 			point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
-			move_randomly()
+			# move_randomly()
 	else:
 		move_randomly()
 
@@ -260,12 +260,14 @@ def is_not_at_point(tankPos, target):
 	return True
 
 def move_randomly():
-	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 5})
-	# time.sleep(0.05)
+
 	heading = random.randint(0, 359)
-	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
+	# GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
 	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
+
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 3})
+	# time.sleep(0.05)
 	# time.sleep(0.05)
 
 tanks = []
@@ -309,6 +311,7 @@ while True:
 			go_to_goal(myTank)
 		elif myTank.getAmmo() != 0 and len(tanks) != 0:
 			shootyTooty(myTank)
+
 		elif myTank.getHealth() <= 2:
 			ninonino(myTank)
 		else:
