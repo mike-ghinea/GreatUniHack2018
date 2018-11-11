@@ -151,22 +151,22 @@ def move(tank, target):
 	[heading, distance] = tank.go_to(target)
 	global GameServer
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	if distance > 4:
 		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': distance})
-		time.sleep(0.05)
+		# time.sleep(0.05)
 
 def move_step_towards(tank, target):
 	global GameServer
 	[heading, distance] = tank.go_to(target)
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
-	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 1})
-	time.sleep(0.05)
+	# time.sleep(0.05)
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 3})
+	# time.sleep(0.05)
 
 def go_to_goal(tank):
 	# print("Going to goal")
@@ -184,15 +184,15 @@ def point_and_shoot(tank, target):
 	global GameServer
 	# print("Turning turret before firing")
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	# print("Turret turned")
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.STOPMOVE)
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.FIRE)
-	time.sleep(0.05)
+	# time.sleep(0.05)
 
 def ninonino(tank):
 	print("Getting health")
@@ -259,13 +259,13 @@ def is_not_at_point(tankPos, target):
 	return True
 
 def move_randomly():
-	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
-	time.sleep(0.05)
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 4})
+	# time.sleep(0.05)
 	heading = random.randint(0, 359)
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
-	time.sleep(0.05)
+	# time.sleep(0.05)
 
 tanks = []
 ammo = []
@@ -280,7 +280,6 @@ tank_with_snitch_id = 0
 control = int(round(time.time() * 1000))
 while True:
 	message = GameServer.readMessage()
-	time.sleep(0.05)
 	# print(message)
 	update_state(message)
 
