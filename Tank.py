@@ -22,6 +22,7 @@ class Tank(object):
                 self.setTurretHeading(message['TurretHeading'])
                 self.setId(message['Id'])
 
+
     def getPosition(self):
         return self.position
 
@@ -59,10 +60,6 @@ class Tank(object):
         self.id = val
 
     def go_to(self, target):
-        heading = get_heading(self.position, target)
-        print(self.getPosition()),
-        print(target)
-
-        distance = get_dist(self.position, target)
-        print(heading, distance)
+        distance = get_dist(self.getPosition(), target)
+        heading = get_heading(self.getPosition(), target)
         return [heading, distance]

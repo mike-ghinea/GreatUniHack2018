@@ -74,7 +74,6 @@ class ServerComms(object):
 			self.MessageTypes.toString(messageType),
 			messagePayload,
 			binascii.hexlify(message)))
-		time.sleep(0.045)
 		return self.ServerSocket.send(message)
 
 # Parse command line args
@@ -135,14 +134,31 @@ def update_state(message):
 		if ok == 0:
 			health.append(message);
 
+	elif "Type" in message and message["Type"] == "Shitch":
+		id_ = message["Id"]
+		ok = 0
+		for index in range(len(snitch)):
+			if snitch[index]["Id"] == id_:
+				snitch[index] = message
+				ok = 1
+
+		if ok == 0:
+			snitch.append(message);
+
 def move(tank, target):
+	print("Moving")
 	[heading, distance] = tank.go_to(target)
 	global GameServer
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
 	if distance > 4:
 		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': distance})
 
+def move_step_towards(tank, target):
+	global GameServer
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 1})
+
 def go_to_goal(tank):
+	print("Going to goal")
 	blue = get_dist(tank.getPosition(), blue_goal)
 	orange = get_dist(tank.getPosition(), orange_goal)
 	if blue < orange:
@@ -151,6 +167,7 @@ def go_to_goal(tank):
 		move(tank, orange_goal)
 
 def point_and_shoot(tank, target):
+	print("Pointing and shooting")
 	heading = get_heading(tank.getPosition(), target)
 	global GameServer
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
@@ -158,6 +175,7 @@ def point_and_shoot(tank, target):
 	GameServer.sendMessage(ServerMessageTypes.FIRE)
 
 def ninonino(tank):
+	print("Getting health")
 	distances = []
 	global health
 	for i in health:
@@ -174,6 +192,7 @@ def ninonino(tank):
 		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
 def INeedAmmo(tank):
+	print("Getting ammo")
 	distances = []
 	global ammo
 	for i in ammo:
@@ -190,18 +209,35 @@ def INeedAmmo(tank):
 		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
 def shootyTooty(tank):
+	print("Shooting everyoneeee")
 	distances = []
 	global tanks
-	tanks = sorted(tanks, key = lambda enemy: enemy['Health'] + get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))/50) # could also use enemy['Health']
+	tanks = sorted(tanks, key = lambda enemy: enemy['Health'] + get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))) # could also use enemy['Health']
 	tanks = [t for t in tanks if t['Health'] != 0]
 
 	if(len(tanks) != 0):
 		enemy = tanks[0]
+		if get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y'])) > 40:
+			print("here")
+			move_step_towards(tank, Point(enemy['X'], enemy['Y']))
 		point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
+	else:
+		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
+		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
-	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
-	# GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
+def get_snitch(tank):
+	print('Getting snitch')
+	move(tank, Point(snitch[0]['X'], snitch[0]['Y']))
 
+def kill_tank_with_snitch(tank, id):
+	print('Trying to kill tank with snitch')
+	enemies = [t for t in tanks if t['Id'] == id]
+	if len(enemies) != 0:
+		enemy = enemies[0]
+		point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
+		move(tank, Point(enemy['X'], enemy['Y']))
+	else:
+		shootyTooty(tank)
 
 def is_not_at_point(tankPos, target):
 	if get_dist(tankPos, target) < 4:
@@ -213,13 +249,49 @@ def is_not_at_point(tankPos, target):
 tanks = []
 ammo = []
 health = []
+snitch = []
+should_bank = False
+snitch_in_game = False
+got_snitch = False
+unbanked_kills = 0
+tank_with_snitch = False
+tank_with_snitch_id = 0
 while True:
 	message = GameServer.readMessage()
 	# print(message)
 	update_state(message)
 
+	if 'messageType' in message:
+		if message['messageType'] == ServerMessageTypes.KILL:
+			unbanked_kills += 1
+		elif message['messageType'] == ServerMessageTypes.SNITCHAPPEARED:
+			snitch_in_game = True
+		elif message['messageType'] == ServerMessageTypes.SNITCHPICKUP:
+			if message['Id'] == myTank.getId():
+				got_snitch = True
+			else:
+				tank_with_snitch = True
+				tank_with_snitch_id = message['Id']
+		elif message['messageType'] == ServerMessageTypes.ENTEREDGOAL:
+			unbanked_kills = 0
+
+	if got_snitch:
+		go_to_goal(myTank)
+	elif tank_with_snitch:
+		kill_tank_with_snitch(myTank, tank_with_snitch_id)
+	elif snitch_in_game:
+		get_snitch(myTank)
+	elif unbanked_kills > 0:
+		go_to_goal(myTank)
+	elif myTank.getAmmo() != 0 and len(tanks) != 0:
+		shootyTooty(myTank)
+	elif myTank.getAmmo() < 8:
+		INeedAmmo(myTank)
+	else:
+		ninonino(myTank)
+
+
 	# print(myTank.getId())
 	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	# GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 	# print(myTank.getPosition())
-	shootyTooty(myTank)
