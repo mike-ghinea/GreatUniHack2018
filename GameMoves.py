@@ -1,8 +1,6 @@
 import quickPointMaths
 import Tank
 
-speed = 10
-
 #centre of arena
 centrePoint = Point(0,0)
 #Boundaries of the arena
@@ -11,9 +9,29 @@ xAxisMin = Point(-70,0)
 yAxisMax = Point(0,100)
 yAxisMin = Point(0,-100)
 
+#Move from start to end point
 def move(tank, endPoint):
     startPoint = tank.getPosition()
-    distance = getDist(startPoint, endPoint)
-    currentPosition = startPoint
-    for x in range(1, distance):
+    currentPos = startPoint
+    if (endPoint.getX() - startPoint.getX() < 0):
+        xspeed = -1
+    elif (endPoint.getX() - startPoint.getX() > 0):
+        xspeed = 1
+    else:
         pass
+    if (endPoint.getY() - startPoint.getY() < 0):
+        yspeed = -1
+    elif (endPoint.getY() - startPoint.getY() > 0):
+        yspeed = 1
+    else:
+        pass
+    for x in range(1, getDist(startPoint, endPoint)):
+        currentPos.setX(currentPos.getX() + xspeed)
+        currentPos.setY(currentPos.getY() + yspeed)
+        tank.setPosition(currentPos)
+
+def moveToGoalMax(tank):
+    move(tank, yAxisMax)
+
+def moveToGoalMin(tank):
+    move(tank, yAxisMin)
