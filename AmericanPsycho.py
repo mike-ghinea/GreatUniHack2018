@@ -165,7 +165,7 @@ def move_step_towards(tank, target):
 	# time.sleep(0.05)
 	GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': heading})
 	# time.sleep(0.05)
-	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 3})
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 50})
 	# time.sleep(0.05)
 
 def go_to_goal(tank):
@@ -238,8 +238,9 @@ def shootyTooty(tank):
 		distance = get_dist(tank.getPosition(), Point(enemy['X'], enemy['Y']))
 		if  distance > 40:
 			move_step_towards(tank, Point(enemy['X'], enemy['Y']))
-
-		point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
+		else:
+			point_and_shoot(tank, Point(enemy['X'], enemy['Y']))
+			move_randomly()
 	else:
 		move_randomly()
 
@@ -259,7 +260,7 @@ def is_not_at_point(tankPos, target):
 	return True
 
 def move_randomly():
-	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 4})
+	GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 5})
 	# time.sleep(0.05)
 	heading = random.randint(0, 359)
 	GameServer.sendMessage(ServerMessageTypes.TURNTURRETTOHEADING, {'Amount': heading})
@@ -308,10 +309,11 @@ while True:
 			go_to_goal(myTank)
 		elif myTank.getAmmo() != 0 and len(tanks) != 0:
 			shootyTooty(myTank)
-		elif myTank.getAmmo() < 8:
-			INeedAmmo(myTank)
-		else:
+		elif myTank.getHealth() <= 2:
 			ninonino(myTank)
+		else:
+			INeedAmmo(myTank)
+
 
 	# print(myTank.getId())
 	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})

@@ -30,10 +30,15 @@ def get_dist(pointA, pointB):
     return math.hypot(headingX, headingY)
 
 def get_heading(pointA, pointB):
-    heading = math.atan2(pointB.getY() - pointA.getY(), pointB.getX() - pointA.getX())
-    heading = math.degrees(heading)
-    heading = - heading % 360
-    return math.fabs(heading)
+    # heading = math.atan2(pointB.getY() - pointA.getY(), pointB.getX() - pointA.getX())
+    # heading = math.degrees(heading)
+    # heading = - heading % 360
+    # return math.fabs(heading)
+
+    heading = (float)(math.atan2(pointB.getY() - pointA.getY(),pointB.getX() - pointA.getX()))
+    heading = (float)(heading*(180.0/math.pi))
+    heading = math.fmod(360 - heading, 360)
+    return abs(heading)
 
 def is_turn_left(currentHeading, desiredHeading):
     diff = desiredHeading - currentHeading
