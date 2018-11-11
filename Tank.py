@@ -1,4 +1,4 @@
-from quickPointMaths import Point
+from quickPointMaths import *
 from serverMessageTypes import ServerMessageTypes
 
 class Tank(object):
@@ -57,3 +57,12 @@ class Tank(object):
 
     def setId(self, val):
         self.id = val
+
+    def go_to(self, target):
+        heading = get_heading(self.position, target)
+        print(self.getPosition()),
+        print(target)
+
+        distance = get_dist(self.position, target)
+        print(heading, distance)
+        return [heading, distance]

@@ -26,7 +26,7 @@ def get_dist(pointA, pointB):
 def get_heading(pointA, pointB):
     heading = math.atan2(pointB.getY() - pointA.getY(), pointB.getX() - pointA.getX())
     heading = math.degrees(heading)
-    heading = (heading - 360) % 360
+    heading = - heading % 360
     return math.fabs(heading)
 
 def is_turn_left(currentHeading, desiredHeading):
@@ -35,6 +35,12 @@ def is_turn_left(currentHeading, desiredHeading):
         return (diff > 180)
     else:
         return (diff >= -180)
+
+
+# Important Points
+centre = Point(0, 0)
+blue_goal = Point(0,100)
+orange_goal = Point(0, -100)
 
 #test values
 '''
