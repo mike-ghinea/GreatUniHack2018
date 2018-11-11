@@ -138,6 +138,22 @@ def ninonino(tank):
 		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 
+def shootytooty(tank):
+	distances = []
+	global ammo
+	for i in ammo:
+		distances.append(get_dist(tank.getPosition(), Point(i['X'], i['Y'])))
+
+	if len(distances) != 0:
+		message = ammo[distances.index(min(distances))]
+		if is_not_at_point(tank.getPosition(), Point(message['X'], message['Y'])):
+			move(tank, Point(message['X'], message['Y']))
+		else:
+			ammo.remove(message)
+	else:
+		GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
+		GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
+
 def is_not_at_point(tankPos, target):
 	if get_dist(tankPos, target) < 4:
 		return False
@@ -189,5 +205,5 @@ while True:
 	# GameServer.sendMessage(ServerMessageTypes.MOVEFORWARDDISTANCE, {'Amount': 2})
 	# GameServer.sendMessage(ServerMessageTypes.TURNTOHEADING, {'Amount': random.randint(0, 359)})
 	# print(myTank.getPosition())
-	ninonino(myTank)
+	shootytooty(myTank)
 
